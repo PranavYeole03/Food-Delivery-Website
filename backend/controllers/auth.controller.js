@@ -32,8 +32,8 @@ export const signUp = async (req, res) => {
 
     const token = await genToken(user._id);
     res.cookie("token", token, {
-      secure: false,
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
@@ -61,10 +61,10 @@ export const signIn = async (req, res) => {
     const token = genToken(user._id);
 
     res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "strict",
-      secure: false,
+     secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
     });
 
     return res.status(200).json({
@@ -89,25 +89,6 @@ export const signOut = async (req, res) => {
     return res.status(500).json(`Sign Out error${error}`);
   }
 };
-
-// export const sendOtp = async (req, res) => {
-//   try {
-//     const { email } = req.body;
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res.status(400).json({ message: "User Does not exist." });
-//     }
-//     const otp = Math.floor(1000 + Math.random() * 9000).toString();
-//     user.resetOtp = otp;
-//     user.otpExpires = Date.now() + 5 * 60 * 1000;
-//     user.isOtpVerified = false;
-//     await user.save();
-//     await sendOtpMail(email, otp);
-//     return res.status(200).json({ message: "Otp send Successfully" });
-//   } catch (error) {
-//     return res.status(500).json(`Send Otp error${error}`);
-//   }
-// };
 
 export const sendOtp = async (req, res) => {
   try {
@@ -150,23 +131,6 @@ export const sendOtp = async (req, res) => {
   }
 };
 
-
-// export const verifyOtp = async (req, res) => {
-//   try {
-//     const { email, otp } = req.body;
-//     const user = await User.findOne({ email });
-//     if (!user || user.resetOtp != otp || user.otpExpires < Date.now()) {
-//       return res.status(400).json({ message: "invalid/expired otp" });
-//     }
-//     user.isOtpVerified = true;
-//     user.resetOtp = undefined;
-//     user.otpExpires = undefined;
-//     await user.save();
-//     return res.status(200).json({ message: "Otp Verified Successfully" });
-//   } catch (error) {
-//     return res.status(500).json(`Verify Otp error${error}`);
-//   }
-// };
 
 export const verifyOtp = async (req, res) => {
   try {
@@ -234,8 +198,8 @@ export const googleAuth = async (req, res) => {
     }
     const token = await genToken(user._id);
     res.cookie("token", token, {
-      secure: false,
-      sameSite: "strict",
+       secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
