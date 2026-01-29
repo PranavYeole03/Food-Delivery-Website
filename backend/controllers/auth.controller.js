@@ -90,39 +90,113 @@ export const signOut = async (req, res) => {
   }
 };
 
+// export const sendOtp = async (req, res) => {
+//   try {
+//     const { email } = req.body;
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(400).json({ message: "User Does not exist." });
+//     }
+//     const otp = Math.floor(1000 + Math.random() * 9000).toString();
+//     user.resetOtp = otp;
+//     user.otpExpires = Date.now() + 5 * 60 * 1000;
+//     user.isOtpVerified = false;
+//     await user.save();
+//     await sendOtpMail(email, otp);
+//     return res.status(200).json({ message: "Otp send Successfully" });
+//   } catch (error) {
+//     return res.status(500).json(`Send Otp error${error}`);
+//   }
+// };
+
 export const sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "User Does not exist." });
+      return res.status(404).json({ message: "User does not exist" });
     }
-    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+    // ✅ 6-digit OTP (recommended)
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
     user.resetOtp = otp;
-    user.otpExpires = Date.now() + 5 * 60 * 1000;
+    user.otpExpires = new Date(Date.now() + 5 * 60 * 1000);
     user.isOtpVerified = false;
+
     await user.save();
-    await sendOtpMail(email, otp);
-    return res.status(200).json({ message: "Otp send Successfully" });
+
+    // 📧 EMAIL (FAIL-SAFE)
+    try {
+      await sendOtpMail(email, otp);
+    } catch (mailError) {
+      console.error("OTP email failed:", mailError);
+      // ❗ DO NOT throw error
+    }
+
+    return res.status(200).json({
+      message: "OTP generated successfully",
+    });
   } catch (error) {
-    return res.status(500).json(`Send Otp error${error}`);
+    console.error("Send OTP error:", error);
+    return res.status(500).json({
+      message: "Failed to generate OTP",
+    });
   }
 };
+
+
+// export const verifyOtp = async (req, res) => {
+//   try {
+//     const { email, otp } = req.body;
+//     const user = await User.findOne({ email });
+//     if (!user || user.resetOtp != otp || user.otpExpires < Date.now()) {
+//       return res.status(400).json({ message: "invalid/expired otp" });
+//     }
+//     user.isOtpVerified = true;
+//     user.resetOtp = undefined;
+//     user.otpExpires = undefined;
+//     await user.save();
+//     return res.status(200).json({ message: "Otp Verified Successfully" });
+//   } catch (error) {
+//     return res.status(500).json(`Verify Otp error${error}`);
+//   }
+// };
 
 export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    const user = await User.findOne({ email });
-    if (!user || user.resetOtp != otp || user.otpExpires < Date.now()) {
-      return res.status(400).json({ message: "invalid/expired otp" });
+
+    if (!email || !otp) {
+      return res.status(400).json({ message: "Email and OTP required" });
     }
+
+    const user = await User.findOne({ email });
+
+    if (
+      !user ||
+      user.resetOtp !== otp ||
+      !user.otpExpires ||
+      user.otpExpires < Date.now()
+    ) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
     user.isOtpVerified = true;
-    user.resetOtp = undefined;
-    user.otpExpires = undefined;
+    user.resetOtp = null;
+    user.otpExpires = null;
+
     await user.save();
-    return res.status(200).json({ message: "Otp Verified Successfully" });
+
+    return res.status(200).json({ message: "OTP verified successfully" });
   } catch (error) {
-    return res.status(500).json(`Verify Otp error${error}`);
+    console.error("Verify OTP error:", error);
+    return res.status(500).json({ message: "OTP verification failed" });
   }
 };
 

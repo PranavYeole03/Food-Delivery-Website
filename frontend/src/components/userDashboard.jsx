@@ -1,238 +1,34 @@
-// import React, { useEffect, useRef, useState } from "react";
-// import Nav from "./Nav";
-// import { categories } from "../category";
-// import CategoryCard from "./CategoryCard";
-// import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
-// import { useSelector } from "react-redux";
-// import FoodCard from "./FoodCard";
-// import { useNavigate } from "react-router-dom";
-
-// const userDashboard = () => {
-//   const cateScrollRef = useRef();
-//   const shopScrollRef = useRef();
-//   const { currentCity, shopInMyCity, itemsInMyCity, searchItems } = useSelector(
-//     (state) => state.user,
-//   );
-//   const [showLeftCateButton, setShowLeftCateButton] = useState(false);
-//   const [showRightCateButton, setShowRightCateButton] = useState(false);
-//   const [showLeftShopButton, setShowLeftShopButton] = useState(false);
-//   const [showRightShopButton, setShowRightShopButton] = useState(false);
-//   const [updatedItemList, setUpdatedItemList] = useState([]);
-//   const navigate = useNavigate();
-
-//   const handleFilterByCategory = (category) => {
-//     if (category == "All") {
-//       setUpdatedItemList(itemsInMyCity);
-//     } else {
-//       const filteredList = itemsInMyCity.filter((i) => i.category === category);
-//       setUpdatedItemList(filteredList);
-//     }
-//   };
-//   useEffect(() => {
-//     setUpdatedItemList(itemsInMyCity);
-//   }, [itemsInMyCity]);
-//   const updateButton = (ref, setLeftButton, setRightButton) => {
-//     const element = ref.current;
-//     if (element) {
-//       setLeftButton(element.scrollLeft > 0);
-//       setRightButton(
-//         element.scrollLeft + element.clientWidth < element.scrollWidth,
-//       );
-//     }
-//   };
-
-//   const scollHandler = (ref, direction) => {
-//     if (ref.current) {
-//       ref.current.scrollBy({
-//         left: direction == "left" ? -200 : 200,
-//         behavior: "smooth",
-//       });
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (cateScrollRef.current) {
-//       updateButton(
-//         cateScrollRef,
-//         setShowLeftCateButton,
-//         setShowRightCateButton,
-//       );
-//       updateButton(
-//         shopScrollRef,
-//         setShowLeftShopButton,
-//         setShowRightShopButton,
-//       );
-//       cateScrollRef.current.addEventListener("scroll", () => {
-//         updateButton(
-//           cateScrollRef,
-//           setShowLeftCateButton,
-//           setShowRightCateButton,
-//         );
-//       });
-//       shopScrollRef.current.addEventListener("scroll", () => {
-//         updateButton(
-//           shopScrollRef,
-//           setShowLeftShopButton,
-//           setShowRightShopButton,
-//         );
-//       });
-//     }
-//     return () => {
-//       cateScrollRef?.current?.removedEventListener("scroll", () => {
-//         updateButton(
-//           cateScrollRef,
-//           setShowLeftCateButton,
-//           setShowRightCateButton,
-//         );
-//       });
-//       shopScrollRef?.current?.removedEventListener("scroll", () => {
-//         updateButton(
-//           shopScrollRef,
-//           setShowLeftShopButton,
-//           setShowRightShopButton,
-//         );
-//       });
-//     };
-//   }, [categories]);
-
-//   return (
-//     <div className="w-screen min-h-screen flex flex-col gap-5 items-center bg-[#fff9f6] overflow-y-auto">
-//       <Nav />
-
-//       {searchItems && searchItems.length > 0 && (
-//         <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-5 bg-white shadow-md rounded-2xl mt-4">
-//           <h1 className="text-gray-900 text-2xl sm:text-3xl font-semibold border-b border-gray-200 pb-2">
-//             Search Results:
-//           </h1>
-//           <div className="w-full h-auto flex flex-wrap gap-6 justify-center">
-//             {searchItems.map((item) => (
-//               <FoodCard data={item} key={item._id} />
-//             ))}
-//           </div>
-//         </div>
-//       )}
-//       {/* Category */}
-//       <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-2.5">
-//         <h1 className="text-gray-800 text-2xl sm:text-3xl">
-//           Inspiration For First Order
-//         </h1>
-//         <div className="w-full relative">
-//           {showLeftCateButton && (
-//             <button
-//               className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#ff4d2d] text-white p-2 rounded-full shado-lg hover:bg-[#e64528] z-10"
-//               onClick={() => scollHandler(cateScrollRef, "left")}
-//             >
-//               <FaChevronCircleLeft />
-//             </button>
-//           )}
-
-//           <div
-//             className="w-full flex overflow-x-auto gap-4 pb-2"
-//             ref={cateScrollRef}
-//           >
-//             {categories.map((cate, index) => (
-//               <CategoryCard
-//                 name={cate.category}
-//                 image={cate.image}
-//                 key={index}
-//                 onClick={() => handleFilterByCategory(cate.category)}
-//               />
-//             ))}
-//           </div>
-//           {showRightCateButton && (
-//             <button
-//               className="absolute right-0 top-1/2 -translate-y-1/2 bg-[#ff4d2d] text-white p-2 rounded-full shado-lg hover:bg-[#e64528] z-10"
-//               onClick={() => scollHandler(cateScrollRef, "right")}
-//             >
-//               <FaChevronCircleRight />
-//             </button>
-//           )}
-//         </div>
-//       </div>
-//       {/* Shop Show */}
-//       <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-2.5">
-//         <h1 className="text-gray-800 text-2xl sm:text-3xl">
-//           Best Shop In {currentCity}
-//         </h1>
-//         <div className="w-full relative">
-//           {showLeftShopButton && (
-//             <button
-//               className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#ff4d2d] text-white p-2 rounded-full shado-lg hover:bg-[#e64528] z-10"
-//               onClick={() => scollHandler(shopScrollRef, "left")}
-//             >
-//               <FaChevronCircleLeft />
-//             </button>
-//           )}
-
-//           <div
-//             className="w-full flex overflow-x-auto gap-4 pb-2"
-//             ref={shopScrollRef}
-//           >
-//             {shopInMyCity?.map((shop, index) => (
-//               <CategoryCard
-//                 name={shop.name}
-//                 image={shop.image}
-//                 key={index}
-//                 onClick={() => navigate(`/shop-items/${shop._id}`)}
-//               />
-//             ))}
-//           </div>
-//           {showRightShopButton && (
-//             <button
-//               className="absolute right-0 top-1/2 -translate-y-1/2 bg-[#ff4d2d] text-white p-2 rounded-full shado-lg hover:bg-[#e64528] z-10"
-//               onClick={() => scollHandler(shopScrollRef, "right")}
-//             >
-//               <FaChevronCircleRight />
-//             </button>
-//           )}
-//         </div>
-//       </div>
-
-//       {/* Product show */}
-//       <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-2.5">
-//         <h1 className="text-gray-800 text-2xl sm:text-3xl">
-//           Suggested Food Items
-//         </h1>
-//         <div className="w-full h-auto flex flex-wrap gap-5 justify-center">
-//           {updatedItemList?.map((item, index) => (
-//             <FoodCard key={index} data={item} />
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default userDashboard;
-
 import React, { useEffect, useState } from "react";
 import Nav from "./Nav";
+import Footer from "./Footer";
 import { categories } from "../category";
 import CategoryCard from "./CategoryCard";
+import FoodCard from "./FoodCard";
 import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import FoodCard from "./FoodCard";
 import { useNavigate } from "react-router-dom";
-import Footer from "./Footer";
+import banner from "../assets/banner.png";
 
-const userDashboard = () => {
+const UserDashboard = () => {
   const { currentCity, shopInMyCity, itemsInMyCity, searchItems } = useSelector(
     (state) => state.user,
   );
 
-  // ✅ FIX 1: safe initial state
-  const [updatedItemList, setUpdatedItemList] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
   const [centerIndex, setCenterIndex] = useState(0);
 
   const navigate = useNavigate();
 
+  /* ================= INITIAL ITEMS ================= */
   useEffect(() => {
-    if (itemsInMyCity) setUpdatedItemList(itemsInMyCity);
+    if (Array.isArray(itemsInMyCity)) {
+      setFilteredItems(itemsInMyCity);
+    }
   }, [itemsInMyCity]);
 
-  /* 🔁 MOBILE AUTO ROTATE — SAFE */
+  /* ================= CATEGORY AUTO ROTATE ================= */
   useEffect(() => {
-    if (!categories || categories.length === 0) return;
+    if (!categories?.length) return;
 
     const interval = setInterval(() => {
       setCenterIndex((prev) => (prev + 1) % categories.length);
@@ -241,25 +37,26 @@ const userDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  /* ================= CATEGORY FILTER ================= */
   const handleFilterByCategory = (category) => {
     if (category === "All") {
-      setUpdatedItemList(itemsInMyCity || []);
+      setFilteredItems(itemsInMyCity || []);
     } else {
-      setUpdatedItemList(
-        (itemsInMyCity || []).filter((i) => i.category === category),
+      setFilteredItems(
+        (itemsInMyCity || []).filter((item) => item.category === category),
       );
     }
   };
 
   const moveLeft = () => {
-    if (!categories || categories.length === 0) return;
+    if (!categories?.length) return;
     setCenterIndex(
       (prev) => (prev - 1 + categories.length) % categories.length,
     );
   };
 
   const moveRight = () => {
-    if (!categories || categories.length === 0) return;
+    if (!categories?.length) return;
     setCenterIndex((prev) => (prev + 1) % categories.length);
   };
 
@@ -267,206 +64,217 @@ const userDashboard = () => {
   const half = Math.floor(total / 2);
 
   return (
-    <div className="w-screen min-h-screen flex flex-col bg-white overflow-y-auto">
+    <div className="w-screen min-h-screen flex flex-col bg-[#fbfbfb00]">
       <Nav />
-      <div
-        className="flex-1 w-full flex flex-col items-center
-             pt-4 px-4 sm:px-6 lg:px-12
-             pb-16 sm:pb-20 lg:pb-24"
-      >
+      {/* ================= BANNER (ONE DIV ONLY) ================= */}
+      <div className="mx-4 sm:mx-6 lg:mx-12 mt-4">
+        <div
+          className="
+      relative
+      w-full
+      h-40 sm:h-50 md:h-65 lg:h-80
+      rounded-2xl overflow-hidden shadow-md
+      bg-cover bg-center
+    "
+          style={{ backgroundImage: `url(${banner})` }}
+        >
+          {/* soft overlay so text is readable */}
+          <div className="absolute inset-0 bg-black/10" />
+
+          {/* text content */}
+          <div className="absolute inset-0 flex items-center">
+            <div className="pl-5 sm:pl-10 lg:pl-14 max-w-[55%]">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+                Fletto
+              </h1>
+
+              <p className="mt-2 text-sm sm:text-base lg:text-lg text-white/90">
+                Fresh food, delivered daily.
+              </p>
+
+              <button
+                className="
+            mt-4
+            px-6 py-2
+            rounded-full
+            bg-green-500
+            text-white
+            font-semibold
+            hover:bg-green-600
+            transition
+          "
+              >
+                Shop Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 w-full px-4 sm:px-6 lg:px-12 pt-4 pb-24">
         {/* ================= SEARCH RESULTS ================= */}
         {Array.isArray(searchItems) && searchItems.length > 0 && (
-          <div className="w-full px-4 sm:px-6 lg:px-10 mt-4">
+          <>
             <h1 className="text-2xl sm:text-3xl mb-3">Search Results</h1>
-
-            <div className="w-full flex flex-wrap gap-4 justify-center">
+            <div className="flex flex-wrap gap-4 justify-center">
               {searchItems.map((item) => (
                 <FoodCard key={item._id} data={item} />
               ))}
             </div>
-          </div>
+          </>
         )}
 
-        {/* ================= REST UI ================= */}
+        {/* ================= MAIN DASHBOARD ================= */}
         {(!Array.isArray(searchItems) || searchItems.length === 0) && (
           <>
-            {/* ================= CATEGORY ================= */}
-            <div className="w-full px-4 sm:px-6 lg:px-10 mt-4">
-              <h1 className="text-2xl sm:text-3xl mb-3">
-                Inspiration For First Order
-              </h1>
+            {/* ================= CATEGORIES ================= */}
+            <h1 className="text-2xl sm:text-3xl mb-4 mt-4">
+              Inspiration For First Order
+            </h1>
 
-              {/* 📱 MOBILE */}
-              <div className="lg:hidden relative w-full h-50 flex items-center justify-center">
-                <button
-                  className="absolute left-1 top-1/2 -translate-y-1/2 z-30 text-[#ff4d2d]"
-                  onClick={moveLeft}
-                >
-                  <FaChevronCircleLeft size={30} />
-                </button>
+            {/* ================= MOBILE ================= */}
+            <div className="lg:hidden relative w-full h-50 flex items-center justify-center">
+              <button
+                className="absolute left-1 top-1/2 -translate-y-1/2 z-30 text-[#ff4d2d]"
+                onClick={moveLeft}
+              >
+                <FaChevronCircleLeft size={30} />
+              </button>
 
-                <button
-                  className="absolute right-1 top-1/2 -translate-y-1/2 z-30 text-[#ff4d2d]"
-                  onClick={moveRight}
-                >
-                  <FaChevronCircleRight size={30} />
-                </button>
+              <button
+                className="absolute right-1 top-1/2 -translate-y-1/2 z-30 text-[#ff4d2d]"
+                onClick={moveRight}
+              >
+                <FaChevronCircleRight size={30} />
+              </button>
 
-                <div className="flex items-center justify-center gap-4 w-full">
-                  {categories?.length > 0 &&
-                    [-1, 0, 1].map((offset) => {
-                      const index =
-                        (centerIndex + offset + categories.length) %
-                        categories.length;
-
-                      return (
-                        <div
-                          key={index}
-                          className="transition-transform duration-500"
-                          style={{
-                            transform:
-                              offset === 0 ? "scale(1.15)" : "scale(1)",
-                          }}
-                        >
-                          <CategoryCard
-                            name={categories[index].category}
-                            image={categories[index].image}
-                            onClick={() =>
-                              handleFilterByCategory(categories[index].category)
-                            }
-                          />
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
-
-              {/* 💻 LAPTOP */}
-              <div className="hidden lg:block relative h-65 overflow-hidden mt-2">
-                <button
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 text-[#ff4d2d]"
-                  onClick={moveLeft}
-                >
-                  <FaChevronCircleLeft size={25} />
-                </button>
-
-                <button
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 text-[#ff4d2d]"
-                  onClick={moveRight}
-                >
-                  <FaChevronCircleRight size={25} />
-                </button>
-
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {categories?.map((cate, index) => {
-                    let position = index - centerIndex;
-                    if (position > half) position -= total;
-                    if (position < -half) position += total;
-
-                    const isCenter = position === 0;
+              <div className="flex items-center justify-center gap-4 w-full">
+                {categories?.length > 0 &&
+                  [-1, 0, 1].map((offset) => {
+                    const index =
+                      (centerIndex + offset + categories.length) %
+                      categories.length;
 
                     return (
                       <div
                         key={index}
-                        className="absolute transition-all duration-700"
+                        className="transition-transform duration-500"
                         style={{
-                          transform: `translateX(${position * 260}px) scale(${
-                            isCenter ? 1.25 : 0.9
-                          })`,
-                          opacity: Math.abs(position) <= 2 ? 1 : 0,
-                          zIndex: isCenter ? 10 : 1,
+                          transform: offset === 0 ? "scale(1.15)" : "scale(1)",
                         }}
                       >
                         <CategoryCard
-                          name={cate.category}
-                          image={cate.image}
-                          onClick={() => handleFilterByCategory(cate.category)}
+                          name={categories[index].category}
+                          image={categories[index].image}
+                          onClick={() =>
+                            handleFilterByCategory(categories[index].category)
+                          }
                         />
                       </div>
                     );
                   })}
-                </div>
+              </div>
+            </div>
+
+            {/* ================= DESKTOP ================= */}
+            <div className="hidden lg:block relative w-full h-70 mt-6">
+              {/* LEFT BUTTON */}
+              <button
+                onClick={moveLeft}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-20"
+              >
+                <FaChevronCircleLeft size={30} className="text-[#ff4d2d]" />
+              </button>
+
+              {/* RIGHT BUTTON */}
+              <button
+                onClick={moveRight}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-20"
+              >
+                <FaChevronCircleRight size={30} className="text-[#ff4d2d]" />
+              </button>
+
+              {/* CATEGORY CARDS */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                {categories.map((cate, index) => {
+                  let pos = index - centerIndex;
+                  if (pos > half) pos -= total;
+                  if (pos < -half) pos += total;
+
+                  return (
+                    <div
+                      key={index}
+                      className="absolute transition-all duration-700"
+                      style={{
+                        transform: `translateX(${pos * 260}px) scale(${
+                          pos === 0 ? 1.25 : 0.9
+                        })`,
+                        opacity: Math.abs(pos) <= 2 ? 1 : 0,
+                        zIndex: pos === 0 ? 10 : 1,
+                      }}
+                    >
+                      <CategoryCard
+                        name={cate.category}
+                        image={cate.image}
+                        onClick={() => handleFilterByCategory(cate.category)}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             {/* ================= SHOPS ================= */}
-            {/* <div className="w-full px-4 sm:px-6 lg:px-10 mt-4">
-            <h1 className="text-2xl sm:text-3xl mb-3">
+            <h1 className="text-2xl sm:text-3xl mb-3 mt-6">
               Best Shop In {currentCity}
             </h1>
 
-            <div className="w-full flex overflow-x-auto gap-4 pb-2">
-              {shopInMyCity?.map((shop) => (
-                <CategoryCard
-                  key={shop._id}
-                  name={shop.name}
-                  image={shop.image}
-                  onClick={() => navigate(`/shop-items/${shop._id}`)}
+            {shopInMyCity?.length === 1 && (
+              <div
+                className="max-w-3xl mx-auto cursor-pointer"
+                onClick={() => navigate(`/shop-items/${shopInMyCity[0]._id}`)}
+              >
+                <img
+                  src={shopInMyCity[0].image}
+                  alt={shopInMyCity[0].name}
+                  className="w-full h-64 object-cover rounded-xl"
                 />
-              ))}
-            </div>
-          </div> */}
-            <div className="w-full px-4 sm:px-6 lg:px-10 mt-4">
-              <h1 className="text-2xl sm:text-3xl mb-3">
-                Best Shop In {currentCity}
-              </h1>
+                <h2 className="text-xl font-semibold text-center mt-3">
+                  {shopInMyCity[0].name}
+                </h2>
+              </div>
+            )}
 
-              {/* CASE 1: Only one shop */}
-              {shopInMyCity?.length === 1 && (
-                <div className="w-full flex justify-center">
-                  <div
-                    onClick={() =>
-                      navigate(`/shop-items/${shopInMyCity[0]._id}`)
-                    }
-                    className="w-full max-w-3xl bg-white rounded-xl shadow-md cursor-pointer overflow-hidden"
-                  >
-                    <img
-                      src={shopInMyCity[0].image}
-                      alt={shopInMyCity[0].name}
-                      className="w-full h-64 object-cover"
-                    />
-                    <div className="p-4 text-center">
-                      <h2 className="text-xl font-semibold">
-                        {shopInMyCity[0].name}
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* CASE 2: Two or more shops */}
-              {shopInMyCity?.length > 1 && (
-                <div className="w-full flex overflow-x-auto gap-4 pb-2">
-                  {shopInMyCity.map((shop) => (
-                    <CategoryCard
-                      key={shop._id}
-                      name={shop.name}
-                      image={shop.image}
-                      onClick={() => navigate(`/shop-items/${shop._id}`)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* ================= PRODUCTS ================= */}
-            <div className="w-full px-4 sm:px-6 lg:px-10 mt-4">
-              <h1 className="text-2xl sm:text-3xl mb-3">
-                Suggested Food Items
-              </h1>
-
-              <div className="w-full flex flex-wrap gap-4 justify-center">
-                {updatedItemList.map((item) => (
-                  <FoodCard key={item._id} data={item} />
+            {shopInMyCity?.length > 1 && (
+              <div className="flex overflow-x-auto gap-4">
+                {shopInMyCity.map((shop) => (
+                  <CategoryCard
+                    key={shop._id}
+                    name={shop.name}
+                    image={shop.image}
+                    onClick={() => navigate(`/shop-items/${shop._id}`)}
+                  />
                 ))}
               </div>
+            )}
+
+            {/* ================= ITEMS ================= */}
+            <h1 className="text-2xl sm:text-3xl mb-3 mt-6">
+              Suggested Food Items
+            </h1>
+
+            <div className="flex flex-wrap gap-4 justify-center">
+              {filteredItems.map((item) => (
+                <FoodCard key={item._id} data={item} />
+              ))}
             </div>
           </>
         )}
       </div>
+
       <Footer />
     </div>
   );
 };
 
-export default userDashboard;
+export default UserDashboard;

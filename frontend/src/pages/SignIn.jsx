@@ -11,11 +11,7 @@ import { setUserData } from "../redux/userSlice";
 import { useDispatch } from "react-redux";
 
 const SignIn = () => {
-  // const primaryColor = "#ff4d2d";
-  // const hoverColor = "#e64323";
-  // const bgColor = "#fff9f6";
-  // const borderColor = "#ddd";
-
+  
   const [showPassword, setShowPassword] = useState(false);
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
