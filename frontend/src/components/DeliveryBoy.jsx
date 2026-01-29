@@ -3,7 +3,7 @@ import Nav from "./Nav";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { serverUrl } from "../App";
-import noOrders from "../assets/No order.png";
+import noOrders from "../assets/no-orders.png";
 import DeliveryBoyTracking from "./DeliveryBoyTracking";
 import { ClipLoader } from "react-spinners";
 import { CiCircleChevUp, CiCircleChevDown } from "react-icons/ci";
