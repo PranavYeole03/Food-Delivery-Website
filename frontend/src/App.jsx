@@ -1,11 +1,17 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1eae48dfb9d1547c20508fa3d270935546f65fe3
 import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { socket } from "./socket";
+<<<<<<< HEAD
 import { Toaster } from "react-hot-toast";
 
 // Pages
+=======
+>>>>>>> 1eae48dfb9d1547c20508fa3d270935546f65fe3
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -20,10 +26,14 @@ import MyOrders from "./pages/MyOrders";
 import TrackOrderPage from "./pages/TrackOrderPage";
 import ShopItems from "./pages/ShopItems";
 import Analytics from "./pages/Analytics";
+<<<<<<< HEAD
 import AppInfo from "./pages/AppInfo";
 import Wallet from "./pages/Wallet";
 
 // Hooks
+=======
+import AppInfo from "./pages/AppInfo"
+>>>>>>> 1eae48dfb9d1547c20508fa3d270935546f65fe3
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
 import useGetCity from "./hooks/useGetCity";
 import useGetMyShop from "./hooks/useGetMyShop";
@@ -31,9 +41,12 @@ import useGetShopByCity from "./hooks/useGetShopByCity";
 import useGetItemByCity from "./hooks/useGetItemByCity";
 import useGetMyOrders from "./hooks/useGetMyOrders";
 import useUpdateLocation from "./hooks/useUpdateLocation";
+<<<<<<< HEAD
 import useNetwork from "./hooks/useNetwork";
 
 // Layout
+=======
+>>>>>>> 1eae48dfb9d1547c20508fa3d270935546f65fe3
 import OwnerLayout from "./components/OwnerLayout";
 import OwnerDashboard from "./components/OwnerDashboard";
 import { serverUrl } from "./config";

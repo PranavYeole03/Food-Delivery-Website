@@ -1,2 +1,2 @@
 export const serverUrl =
-  import.meta.env.VITE_SERVER_URL?.trim() || "http://localhost:8000";
+  import.meta.env.VITE_SERVER_URL?.trim() || "https://food-delivery-website-zwuz.onrender.com";

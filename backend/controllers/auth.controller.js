@@ -62,7 +62,16 @@ export const signUp = async (req, res, next) => {
     });
 
     const token = await genToken(user._id);
+ 
     setTokenCookie(res, token);
+
+    res.cookie("token", token, {
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
 
     return res.status(201).json({ user: sanitizeUser(user), token });
   } catch (error) {
@@ -99,7 +108,16 @@ export const signIn = async (req, res, next) => {
 
     const token = await genToken(user._id);
 
+
     setTokenCookie(res, token);
+
+    res.cookie("token", token, {
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
 
     return res.status(200).json({
       message: "Signin successful",
@@ -230,7 +248,15 @@ export const googleAuth = async (req, res, next) => {
       });
     }
     const token = await genToken(user._id);
+
     setTokenCookie(res, token);
+
+    res.cookie("token", token, {
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
 
     return res.status(201).json({ user: sanitizeUser(user), token });
   } catch (error) {

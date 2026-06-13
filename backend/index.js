@@ -24,7 +24,10 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   process.env.FRONTEND_URL_PRODUCTION,
   "http://localhost:5173",
+<<<<<<< HEAD
   "http://localhost:4173"
+=======
+>>>>>>> 1eae48dfb9d1547c20508fa3d270935546f65fe3
 ]
   .map((origin) => origin?.trim())
   .filter(Boolean);
