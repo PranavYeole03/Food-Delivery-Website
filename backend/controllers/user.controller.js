@@ -1,6 +1,6 @@
 import User from "../models/user.model.js";
 
-export const getCurrentUser = async (req, res) => {
+export const getCurrentUser = async (req, res, next) => {
   try {
     const userId = req.userId;
     if (!userId) {
@@ -12,11 +12,11 @@ export const getCurrentUser = async (req, res) => {
     }
     return res.status(200).json(user);
   } catch (error) {
-    return res.status(500).json({ message: `Get current user error${error}` });
+    return next(error);
   }
 };
 
-export const updateUserLocation = async (req, res) => {
+export const updateUserLocation = async (req, res, next) => {
   try {
     const { lat, lon } = req.body;
     const user = await User.findByIdAndUpdate(
@@ -34,8 +34,23 @@ export const updateUserLocation = async (req, res) => {
     }
     return res.status(200).json({ message: "location updated" });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: `Update location user error${error}` });
+    return next(error);
+  }
+};
+
+export const updateFcmToken = async (req, res, next) => {
+  try {
+    const { fcmToken } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { fcmToken },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ message: "FCM token updated successfully" });
+  } catch (error) {
+    return next(error);
   }
 };

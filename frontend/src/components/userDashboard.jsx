@@ -301,6 +301,7 @@ import FoodCard from "./FoodCard";
 import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { optimizeCloudinaryUrl } from "../utils/cloudinary";
 
 import banner from "../assets/banner.png";
 import banner2 from "../assets/banner2.png";
@@ -371,6 +372,7 @@ const UserDashboard = () => {
 
   const total = categories?.length || 0;
   const half = Math.floor(total / 2);
+  const hasLocation = Boolean(currentCity?.trim());
 
   return (
     <div className="w-screen min-h-screen flex flex-col bg-white">
@@ -551,50 +553,61 @@ const UserDashboard = () => {
               </div>
             </div>
 
-            {/* ================= SHOPS ================= */}
-            <h1 className="text-2xl sm:text-3xl mb-3 mt-6">
-              Best Shop In {currentCity}
-            </h1>
-
-            {shopInMyCity?.length === 1 && (
-              <div
-                className="max-w-3xl mx-auto cursor-pointer"
-                onClick={() => navigate(`/shop-items/${shopInMyCity[0]._id}`)}
-              >
-                <img
-                  src={shopInMyCity[0].image}
-                  alt={shopInMyCity[0].name}
-                  className="w-full h-64 object-cover rounded-xl"
-                />
-                <h2 className="text-xl font-semibold text-center mt-3">
-                  {shopInMyCity[0].name}
-                </h2>
+            {!hasLocation ? (
+              <div className="mt-8 rounded-xl border border-orange-200 bg-orange-50 px-5 py-6 text-center text-gray-800">
+                <h2 className="text-xl font-semibold">Turn on location to see nearby restaurants</h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  Restaurants and suggested food items are shown after your city is detected.
+                </p>
               </div>
+            ) : (
+              <>
+                {/* ================= SHOPS ================= */}
+                <h1 className="text-2xl sm:text-3xl mb-3 mt-6">
+                  Best Shop In {currentCity}
+                </h1>
+
+                {shopInMyCity?.length === 1 && (
+                  <div
+                    className="max-w-3xl mx-auto cursor-pointer"
+                    onClick={() => navigate(`/shop-items/${shopInMyCity[0]._id}`)}
+                  >
+                    <img
+                      src={optimizeCloudinaryUrl(shopInMyCity[0].image, 900)}
+                      alt={shopInMyCity[0].name}
+                      className="w-full h-64 object-cover rounded-xl"
+                    />
+                    <h2 className="text-xl font-semibold text-center mt-3">
+                      {shopInMyCity[0].name}
+                    </h2>
+                  </div>
+                )}
+
+                {shopInMyCity?.length > 1 && (
+                  <div className="flex overflow-x-auto gap-4">
+                    {shopInMyCity.map((shop) => (
+                      <CategoryCard
+                        key={shop._id}
+                        name={shop.name}
+                        image={shop.image}
+                        onClick={() => navigate(`/shop-items/${shop._id}`)}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* ================= ITEMS ================= */}
+                <h1 className="text-2xl sm:text-3xl mb-3 mt-6">
+                  Suggested Food Items
+                </h1>
+
+                <div className="flex flex-wrap gap-4 justify-center">
+                  {filteredItems.map((item) => (
+                    <FoodCard key={item._id} data={item} />
+                  ))}
+                </div>
+              </>
             )}
-
-            {shopInMyCity?.length > 1 && (
-              <div className="flex overflow-x-auto gap-4">
-                {shopInMyCity.map((shop) => (
-                  <CategoryCard
-                    key={shop._id}
-                    name={shop.name}
-                    image={shop.image}
-                    onClick={() => navigate(`/shop-items/${shop._id}`)}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* ================= ITEMS ================= */}
-            <h1 className="text-2xl sm:text-3xl mb-3 mt-6">
-              Suggested Food Items
-            </h1>
-
-            <div className="flex flex-wrap gap-4 justify-center">
-              {filteredItems.map((item) => (
-                <FoodCard key={item._id} data={item} />
-              ))}
-            </div>
           </>
         )}
       </div>

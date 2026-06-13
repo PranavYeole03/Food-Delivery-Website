@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api/axios";
 import React, { useEffect, useState } from "react";
 import { serverUrl } from "../App";
 import { useNavigate, useParams } from "react-router-dom";
@@ -24,14 +24,14 @@ const ShopItems = () => {
   const handleShop = async () => {
     try {
       setLoading(true);
-      const result = await axios.get(
+      const result = await api.get(
         `${serverUrl}/api/item/get-by-shop/${shopId}`,
         { withCredentials: true }
       );
       setShop(result.data.shop);
       setItems(result.data.items);
     } catch (error) {
-      console.log(error);
+      
     } finally {
       setLoading(false);
     }
@@ -148,3 +148,4 @@ const ShopItems = () => {
 };
 
 export default ShopItems;
+

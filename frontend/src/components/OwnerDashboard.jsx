@@ -120,13 +120,14 @@ import {
   FaHotel,
   FaPen,
   FaHome,
+  FaPlus,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import OwnerItemCard from "./OwnerItemCard";
 import { FiBarChart2 } from "react-icons/fi";
 import { useEffect } from "react";
 import { socket } from "../socket";
-import { MdAdd } from "react-icons/md";
+import useSocket from "../hooks/useSocket";
 
 const OwnerDashboard = () => {
   const { myShopData } = useSelector((state) => state.owner);
@@ -134,30 +135,18 @@ const OwnerDashboard = () => {
 
   // 👉 SAFE DATA
   const totalItems = myShopData?.items?.length || 0;
-  useEffect(() => {
-    if (!socket) return;
+  // These listeners can trigger Redux actions or local state updates as needed
+  useSocket("orderDelivered", (data) => {
+    // Handle order delivered
+  });
 
-    /* 🔥 ORDER DELIVERED */
-    socket.on("orderDelivered", (data) => {
-      console.log("Order Delivered:", data);
-    });
+  useSocket("orderAccepted", (data) => {
+    // Handle order accepted
+  });
 
-    /* 🔥 ORDER ACCEPTED */
-    socket.on("orderAccepted", (data) => {
-      console.log("Order Accepted:", data);
-    });
-
-    /* 🔥 STATUS UPDATED */
-    socket.on("update-Status", (data) => {
-      console.log("Status Updated:", data);
-    });
-
-    return () => {
-      socket.off("orderDelivered");
-      socket.off("orderAccepted");
-      socket.off("update-Status");
-    };
-  }, []);
+  useSocket("readyForPickup", (data) => {
+    // Handle status update
+  });
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
@@ -251,7 +240,7 @@ const OwnerDashboard = () => {
                 onClick={() => navigate("/owner/add-items")}
                 className="bg-[#ff4d2d] text-white p-2 rounded-full shadow hover:scale-110 transition"
               >
-                <MdAdd size={14} />
+                <FaPlus size={14} />
               </button>
 
             </div>

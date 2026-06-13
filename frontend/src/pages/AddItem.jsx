@@ -3,7 +3,7 @@ import { IoArrowBack } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FaUtensils } from "react-icons/fa";
-import axios from "axios";
+import api from "../api/axios";
 import { serverUrl } from "../App";
 import { setmyShopData } from "../redux/ownerSlice";
 import { ClipLoader } from "react-spinners";
@@ -53,17 +53,17 @@ const AddItem = () => {
       if (backendImage) {
         formData.append("image", backendImage);
       }
-      const result = await axios.post(
+      const result = await api.post(
         `${serverUrl}/api/item/add-items`,
         formData,
         { withCredentials: true }
       );
       dispatch(setmyShopData(result.data));
-      console.log(result.data);
+      
       setLoading(false);
       navigate("/");
     } catch (error) {
-      console.log(error);
+      
       setLoading(false);
     }
   };
@@ -302,3 +302,4 @@ const AddItem = () => {
 };
 
 export default AddItem;
+

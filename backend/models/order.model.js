@@ -28,7 +28,7 @@ const shopOrderSchema = new mongoose.Schema(
     shopOrderItems: [shopOrderItemsSchema],
     status: {
       type: String,
-      enum: ["pending", "preparing", "out of delivery", "delivered"],
+      enum: ["pending", "preparing", "out of delivery", "delivered", "cancelled", "returned"],
       default: "pending",
     },
     assignment: {
@@ -64,8 +64,79 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["cod", "online"],
+      enum: ["cod", "online", "pickup_advance", "pickup_full", "pay_at_restaurant", "wallet", "wallet_razorpay"],
       required: true,
+    },
+    orderType: {
+      type: String,
+      enum: ["delivery", "selfPickup"],
+      default: "delivery",
+    },
+    pickupTimeSlot: {
+      type: String,
+      default: null,
+    },
+    pickupCustomerName: {
+      type: String,
+      default: null,
+    },
+    pickupCustomerMobile: {
+      type: String,
+      default: null,
+    },
+    specialInstructions: {
+      type: String,
+      default: null,
+    },
+    pickupOtp: {
+      type: String,
+      default: null,
+    },
+    otpVerified: {
+      type: Boolean,
+      default: false,
+    },
+    cancellationAllowedUntil: {
+      type: Date,
+      default: null,
+    },
+    cancelReason: {
+      type: String,
+      default: null,
+    },
+    cancelReasonType: {
+      type: String,
+      default: null,
+    },
+    cancelledAt: {
+      type: Date,
+      default: null,
+    },
+    refundAmount: {
+      type: Number,
+      default: 0,
+    },
+    refundStatus: {
+      type: String,
+      enum: ["none", "pending", "processed"],
+      default: "none",
+    },
+    refundProcessedAt: {
+      type: Date,
+      default: null,
+    },
+    walletAmountPaid: {
+      type: Number,
+      default: 0,
+    },
+    onlineAmountPaid: {
+      type: Number,
+      default: 0,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "preparing", "out of delivery", "delivered", "cancelled", "returned"],
+      default: "pending",
     },
     deliveryAddress: {
       text: String,
@@ -91,6 +162,9 @@ const orderSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+orderSchema.index({ user: 1 });
+orderSchema.index({ createdAt: -1 });
 
 const Order = mongoose.model("Order", orderSchema);
 

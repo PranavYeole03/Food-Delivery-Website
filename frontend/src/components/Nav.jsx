@@ -4,7 +4,7 @@
 // import { IoMdClose } from "react-icons/io";
 // import { useDispatch, useSelector } from "react-redux";
 // import { useNavigate } from "react-router-dom";
-// import axios from "axios";
+// import api from "../api/axios";
 // import { serverUrl } from "../App";
 // import { setSearchItems, setUserData } from "../redux/userSlice";
 // import { HiOutlineClipboardList } from "react-icons/hi";
@@ -24,18 +24,18 @@
 
 //   const handleLogOut = async () => {
 //     try {
-//       await axios.get(`${serverUrl}/api/auth/signout`, {
+//       await api.get(`${serverUrl}/api/auth/signout`, {
 //         withCredentials: true,
 //       });
 //       dispatch(setUserData(null));
 //     } catch (error) {
-//       console.log(error);
+//       
 //     }
 //   };
 
 //   const handleSearchItems = async () => {
 //     try {
-//       const result = await axios.get(
+//       const result = await api.get(
 //         `${serverUrl}/api/item/search-items?query=${query}&city=${currentCity}`,
 //         { withCredentials: true }
 //       );
@@ -225,11 +225,12 @@ import { FaLocationDot, FaUtensils } from "react-icons/fa6";
 import { IoSearch, IoCartOutline, IoClose } from "react-icons/io5"; // ✅ fixed
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 import { FiMenu } from "react-icons/fi";
 import { serverUrl } from "../App";
 import { setSearchItems, setUserData } from "../redux/userSlice";
 import { HiOutlineClipboardList } from "react-icons/hi";
+import { clearAuthStorage } from "../utils/authToken";
 
 const Nav = () => {
   const { userData, currentCity, cartItems } = useSelector(
@@ -249,33 +250,44 @@ const Nav = () => {
   const isOwnerDashboard = location.pathname.startsWith("/owner");
   const handleLogOut = async () => {
     try {
-      await axios.get(`${serverUrl}/api/auth/signout`, {
+      await api.get(`${serverUrl}/api/auth/signout`, {
         withCredentials: true,
       });
+      clearAuthStorage();
       dispatch(setUserData(null));
+      navigate("/signin");
     } catch (error) {
-      console.log(error);
+      clearAuthStorage();
+      dispatch(setUserData(null));
+      navigate("/signin");
     }
   };
 
   useEffect(() => {
     const fetchItems = async () => {
-      if (!query.trim()) {
-        dispatch(setSearchItems(null));
-        return;
-      }
       try {
-        const result = await axios.get(
+        const result = await api.get(
           `${serverUrl}/api/item/search-items?query=${query}&city=${currentCity}`,
           { withCredentials: true }
         );
         dispatch(setSearchItems(result.data));
       } catch (err) {
-        console.log(err);
+
       }
     };
 
-    fetchItems();
+    if (!query.trim()) {
+      dispatch(setSearchItems(null));
+      return;
+    }
+
+    const handler = setTimeout(() => {
+      fetchItems();
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
   }, [query, currentCity, dispatch]);
 
   return (
@@ -414,19 +426,33 @@ const Nav = () => {
 
         {/* DROPDOWN */}
         {showInfo && (
-          <div className="absolute top-14 right-4 bg-white shadow-lg rounded-lg p-3 w-44 z-50">
+          <div className="absolute top-14 right-4 bg-white shadow-lg rounded-lg p-3 w-44 z-50 border border-gray-100">
 
-            <p className="font-semibold text-sm mb-2">
+            <p className="font-semibold text-sm mb-2 pb-1.5 border-b border-gray-100 text-gray-800">
               {userData?.fullName}
             </p>
 
             {role === "user" && (
-              <button
-                className=" md:hidden w-full text-left text-sm text-[#ff4d2d]"
-                onClick={() => navigate("/my-order")}
-              >
-                My Orders
-              </button>
+              <div className="flex flex-col gap-2">
+                <button
+                  className="w-full text-left text-sm text-gray-600 hover:text-[#ff4d2d] transition-colors"
+                  onClick={() => { setShowInfo(false); alert(`Profile Info:\nName: ${userData.fullName}\nEmail: ${userData.email}`); }}
+                >
+                  My Profile
+                </button>
+                <button
+                  className="w-full text-left text-sm text-gray-600 hover:text-[#ff4d2d] transition-colors"
+                  onClick={() => { setShowInfo(false); navigate("/my-order"); }}
+                >
+                  My Orders
+                </button>
+                <button
+                  className="w-full text-left text-sm text-green-600 font-semibold hover:text-green-700 transition-colors"
+                  onClick={() => { setShowInfo(false); navigate("/wallet"); }}
+                >
+                  My Wallet
+                </button>
+              </div>
             )}
 
             {role === "owner" && (

@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { serverUrl } from "../App";
+import api from "../api/axios";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
 import { ClipLoader } from "react-spinners";
 import { setUserData } from "../redux/userSlice";
 import { useDispatch } from "react-redux";
+import { setAuthToken } from "../utils/authToken";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const SignIn = () => {
   
@@ -21,18 +23,31 @@ const SignIn = () => {
 
   const navigate = useNavigate();
 
+  const validateSignIn = () => {
+    if (!email.trim()) return "Email is required";
+    if (!emailRegex.test(email.trim())) return "Please enter a valid email";
+    if (!password) return "Password is required";
+    if (password.length < 6) return "Password must be at least 6 characters";
+    return "";
+  };
+
   const handleSignIn = async () => {
+    const validationError = validateSignIn();
+    if (validationError) {
+      return setErr(validationError);
+    }
+
     setLoading(true);
     try {
-      const result = await axios.post(
-        `${serverUrl}/api/auth/signin`,
+      const result = await api.post(
+        "/api/auth/signin",
         {
-          email,
+          email: email.trim(),
           password,
-        },
-        { withCredentials: true }
+        }
       );
-      dispatch(setUserData(result.data));
+      setAuthToken(result.data.token);
+      dispatch(setUserData(result.data.user));
       setErr("");
       setLoading(false);
     } catch (error) {
@@ -45,16 +60,16 @@ const SignIn = () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     try {
-      const { data } = await axios.post(
-        `${serverUrl}/api/auth/google-auth`,
+      const { data } = await api.post(
+        "/api/auth/google-auth",
         {
           email: result.user.email,
-        },
-        { withCredentials: true }
+        }
       );
-      dispatch(setUserData(data));
+      setAuthToken(data.token);
+      dispatch(setUserData(data.user));
     } catch (error) {
-      console.log(error);
+      setErr(error?.response?.data?.message || error.message || "Google sign in failed");
     }
   };
   return (
@@ -76,7 +91,7 @@ const SignIn = () => {
             className="w-full rounded-lg px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff4d2d]"
             placeholder="Enter your Email"
             value={email}
-            onChange={(e) => setemail(e.target.value)}
+            onChange={(e) => setemail(e.target.value.trim())}
             required
           />
         </div>
@@ -94,6 +109,7 @@ const SignIn = () => {
               value={password}
               onChange={(e) => setpassword(e.target.value)}
               required
+              minLength={6}
             />
             <button
               type="button"

@@ -8,7 +8,10 @@ export default defineConfig(({ mode }) => {
   const backendUrl = env.VITE_SERVER_URL || "http://localhost:8000";
 
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+    ],
     server: {
       proxy: {
         "/api": {

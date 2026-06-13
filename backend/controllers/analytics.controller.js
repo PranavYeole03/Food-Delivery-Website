@@ -2,9 +2,17 @@ import Order from "../models/order.model.js";
 import Item from "../models/item.model.js";
 import Shop from "../models/shop.model.js";
 
-export const getOwnerAnalytics = async (req, res) => {
+const ownerAnalyticsCache = {};
+
+export const getOwnerAnalytics = async (req, res, next) => {
   try {
     const ownerId = req.userId;
+    const cacheKey = ownerId.toString();
+    const cached = ownerAnalyticsCache[cacheKey];
+
+    if (cached && Date.now() - cached.timestamp < 30000) {
+      return res.status(200).json(cached.data);
+    }
     const currentMonth = new Date().getMonth();
 
     const monthlyItemMap = {};
@@ -12,14 +20,14 @@ export const getOwnerAnalytics = async (req, res) => {
     const monthlyMap = {};
     const weeklyMap = {};
 
-    const shop = await Shop.findOne({ owner: ownerId });
+    const shop = await Shop.findOne({ owner: ownerId }).lean();
     if (!shop) {
       return res.status(400).json({ message: "Shop not found" });
     }
 
     const orders = await Order.find({
       "shopOrders.owner": ownerId,
-    });
+    }).lean();
 
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
@@ -113,9 +121,10 @@ export const getOwnerAnalytics = async (req, res) => {
     const topRatedItems = await Item.find({ shop: shop._id })
       .sort({ "rating.average": -1 })
       .limit(5)
-      .select("name rating price image");
+      .select("name rating price image")
+      .lean();
 
-    return res.status(200).json({
+    const responseData = {
       success: true,
 
       stats: {
@@ -143,11 +152,16 @@ export const getOwnerAnalytics = async (req, res) => {
       topItems,
       topItemsMonthly,
       topRatedItems,
-    });
+    };
+
+    ownerAnalyticsCache[cacheKey] = {
+      data: responseData,
+      timestamp: Date.now(),
+    };
+
+    return res.status(200).json(responseData);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      message: "Analytics error",
-    });
+    
+    return next(error);
   }
 };

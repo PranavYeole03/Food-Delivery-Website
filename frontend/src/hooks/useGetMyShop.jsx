@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { serverUrl } from "../App";
 import { useDispatch, useSelector } from "react-redux";
 import { setmyShopData } from "../redux/ownerSlice";
@@ -11,13 +11,13 @@ function useGetMyShop() {
   useEffect(() => {
     const fetchShop = async () => {
       try {
-        const result = await axios.get(`${serverUrl}/api/shop/get-myshop`, {
+        const result = await api.get(`${serverUrl}/api/shop/get-myshop`, {
           withCredentials: true,
         });
 
         dispatch(setmyShopData(result.data));
       } catch (error) {
-        console.log(error);
+        
       }
     };
 
@@ -26,3 +26,4 @@ function useGetMyShop() {
 }
 
 export default useGetMyShop;
+

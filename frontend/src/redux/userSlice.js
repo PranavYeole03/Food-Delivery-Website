@@ -92,6 +92,10 @@ const userSlice = createSlice({
         0,
       );
     },
+    clearCart: (state) => {
+      state.cartItems = [];
+      state.totalAmount = 0;
+    },
 
     setMyOrders: (state, action) => {
       state.myOrders = action.payload;
@@ -132,6 +136,7 @@ export const {
   addToCart,
   updateQuantity,
   removeCartItem,
+  clearCart,
   setMyOrders,
   addMyOrder,
   updateOrderStatus,

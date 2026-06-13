@@ -1,4 +1,5 @@
 import React from "react";
+import { optimizeCloudinaryUrl } from "../utils/cloudinary";
 
 const CategoryCard = ({ name, image, onClick }) => {
   return (
@@ -7,8 +8,8 @@ const CategoryCard = ({ name, image, onClick }) => {
       onClick={onClick}
     >
       <img
-        src={image}
-        alt=""
+        src={optimizeCloudinaryUrl(image, 300)}
+        alt={name}
         className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
       />
       <div className="absolute bottom-0 w-full left-0 bg-[#ffffff96] bg-opacity-95 px-3 py-1 rounded-t-xl text-center shadow text-sm font-medium text-gray-800 backdrop-blur">

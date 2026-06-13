@@ -1,7 +1,7 @@
 import Shop from "../models/shop.model.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 
-export const createEditShop = async (req, res) => {
+export const createEditShop = async (req, res, next) => {
   try {
     const { name, city, state, address } = req.body;
     let image;
@@ -19,16 +19,21 @@ export const createEditShop = async (req, res) => {
         owner: req.userId,
       });
     } else {
+      const updateData = {
+        name,
+        city,
+        state,
+        address,
+        owner: req.userId,
+      };
+
+      if (image) {
+        updateData.image = image;
+      }
+
       shop = await Shop.findByIdAndUpdate(
         shop._id,
-        {
-          name,
-          city,
-          state,
-          address,
-          image,
-          owner: req.userId,
-        },
+        updateData,
         { new: true }
       );
     }
@@ -36,11 +41,11 @@ export const createEditShop = async (req, res) => {
     await shop.populate("owner items");
     return res.status(201).json(shop);
   } catch (error) {
-    return res.status(500).json({ message: `create shop error ${error}` });
+    return next(error);
   }
 };
 
-export const getMyShop = async (req, res) => {
+export const getMyShop = async (req, res, next) => {
   try {
     const shop = await Shop.findOne({ owner: req.userId })
       .populate("owner")
@@ -55,11 +60,11 @@ export const getMyShop = async (req, res) => {
 
     return res.status(200).json(shop);
   } catch (error) {
-    return res.status(500).json({ message: `Get my shop error ${error}` });
+    return next(error);
   }
 };
 
-export const getShopCity = async (req, res) => {
+export const getShopCity = async (req, res, next) => {
   try {
     const { city } = req.params;
 
@@ -71,6 +76,6 @@ export const getShopCity = async (req, res) => {
     }
     return res.status(200).json(shops);
   } catch (error) {
-    return res.status(500).json({ message: `Get shop by city error ${error}` });
+    return next(error);
   }
 };

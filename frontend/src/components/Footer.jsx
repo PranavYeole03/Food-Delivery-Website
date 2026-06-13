@@ -16,14 +16,14 @@ const Footer = () => {
   if (userData?.role === "deliveryBoy") {
     return (
       <footer className="w-full border-t bg-slate-900 text-gray-400">
-        <div className="h-12 flex items-center justify-center text-sm">
-          © {new Date().getFullYear()} Fletto · Delivery Partner Panel
+        <div className="h-12 flex items-center justify-between px-4 text-sm">
+          <span>© {new Date().getFullYear()} Fletto</span>
         </div>
       </footer>
     );
   }
 
-  /* ================= FULL FOOTER (USERS / OTHERS) ================= */
+  /* ================= FULL FOOTER ================= */
   return (
     <footer className="w-full bg-slate-900 text-gray-400">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
@@ -38,47 +38,31 @@ const Footer = () => {
           <div>
             <h2 className="text-white font-semibold mb-4">Company</h2>
             <ul className="space-y-2">
-              <li className="hover:text-orange-400 cursor-pointer">
-                About Fletto
-              </li>
+              <li className="hover:text-orange-400 cursor-pointer">About</li>
               <li className="hover:text-orange-400 cursor-pointer">Careers</li>
               <li className="hover:text-orange-400 cursor-pointer">Press</li>
               <li className="hover:text-orange-400 cursor-pointer">Contact</li>
             </ul>
           </div>
 
-          {/* FOR USERS */}
+          {/* USERS */}
           <div>
             <h2 className="text-white font-semibold mb-4">For Users</h2>
             <ul className="space-y-2">
-              <li className="hover:text-orange-400 cursor-pointer">
-                Browse Restaurants
-              </li>
-              <li className="hover:text-orange-400 cursor-pointer">
-                Track Orders
-              </li>
-              <li className="hover:text-orange-400 cursor-pointer">
-                Offers & Deals
-              </li>
-              <li className="hover:text-orange-400 cursor-pointer">
-                Help Center
-              </li>
+              <li className="hover:text-orange-400 cursor-pointer">Browse</li>
+              <li className="hover:text-orange-400 cursor-pointer">Track</li>
+              <li className="hover:text-orange-400 cursor-pointer">Offers</li>
+              <li className="hover:text-orange-400 cursor-pointer">Help</li>
             </ul>
           </div>
 
-          {/* FOR RESTAURANTS */}
+          {/* RESTAURANTS */}
           <div>
             <h2 className="text-white font-semibold mb-4">For Restaurants</h2>
             <ul className="space-y-2">
-              <li className="hover:text-orange-400 cursor-pointer">
-                List Your Restaurant
-              </li>
-              <li className="hover:text-orange-400 cursor-pointer">
-                Restaurant Dashboard
-              </li>
-              <li className="hover:text-orange-400 cursor-pointer">
-                Business Support
-              </li>
+              <li className="hover:text-orange-400 cursor-pointer">List</li>
+              <li className="hover:text-orange-400 cursor-pointer">Dashboard</li>
+              <li className="hover:text-orange-400 cursor-pointer">Support</li>
             </ul>
           </div>
 
@@ -86,18 +70,12 @@ const Footer = () => {
           <div>
             <h2 className="text-white font-semibold mb-4">Delivery Partners</h2>
             <ul className="space-y-2 mb-6">
-              <li className="hover:text-orange-400 cursor-pointer">
-                Join as Delivery Partner
-              </li>
-              <li className="hover:text-orange-400 cursor-pointer">
-                Delivery App
-              </li>
-              <li className="hover:text-orange-400 cursor-pointer">
-                Earnings & Incentives
-              </li>
+              <li className="hover:text-orange-400 cursor-pointer">Join</li>
+              <li className="hover:text-orange-400 cursor-pointer">App</li>
+              <li className="hover:text-orange-400 cursor-pointer">Earnings</li>
             </ul>
 
-            <div className="flex gap-4 text-lg text-gray-300">
+            <div className="flex gap-4 text-lg">
               <FaInstagram className="hover:text-orange-400 cursor-pointer" />
               <FaLinkedinIn className="hover:text-orange-400 cursor-pointer" />
               <FaFacebookF className="hover:text-orange-400 cursor-pointer" />
@@ -106,43 +84,21 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* APP BUTTONS */}
-        <div className="mt-12 flex flex-col sm:flex-row gap-4">
+        {/* APP DOWNLOAD + INSTALL */}
+        <div className="mt-12 flex flex-col sm:flex-row gap-4 items-center">
           {/* APP STORE */}
-          <button
-            className="
-      w-full sm:w-auto
-      flex items-center justify-center gap-3
-      px-6 py-3
-      rounded-xl
-      border border-gray-600
-      text-gray-200
-      hover:bg-slate-800
-      transition
-    "
-          >
+          <button className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 rounded-xl border border-gray-600 hover:bg-slate-800 transition">
             <FaApple className="text-xl" />
-            <div className="flex flex-col leading-tight text-left">
-              <span className="text-xs text-gray-400">Download on the</span>
+            <div className="flex flex-col text-left">
+              <span className="text-xs text-gray-400">Download on</span>
               <span className="text-sm font-semibold">App Store</span>
             </div>
           </button>
 
-          {/* GOOGLE PLAY */}
-          <button
-            className="
-      w-full sm:w-auto
-      flex items-center justify-center gap-3
-      px-6 py-3
-      rounded-xl
-      border border-gray-600
-      text-gray-200
-      hover:bg-slate-800
-      transition
-    "
-          >
+          {/* PLAY STORE */}
+          <button className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 rounded-xl border border-gray-600 hover:bg-slate-800 transition">
             <IoLogoGooglePlaystore className="text-xl text-emerald-400" />
-            <div className="flex flex-col leading-tight text-left">
+            <div className="flex flex-col text-left">
               <span className="text-xs text-gray-400">Get it on</span>
               <span className="text-sm font-semibold">Google Play</span>
             </div>

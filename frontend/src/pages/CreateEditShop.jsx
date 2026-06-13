@@ -3,7 +3,7 @@ import { IoArrowBack } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FaUtensils } from "react-icons/fa";
-import axios from "axios";
+import api from "../api/axios";
 import { serverUrl } from "../App";
 import { setmyShopData } from "../redux/ownerSlice";
 import { ClipLoader } from "react-spinners";
@@ -62,7 +62,7 @@ const CreateEditShop = () => {
         formData.append("image", backendImage);
       }
 
-      const result = await axios.post(
+      const result = await api.post(
         `${serverUrl}/api/shop/create-edit`,
         formData,
         { withCredentials: true },
@@ -72,7 +72,7 @@ const CreateEditShop = () => {
       setLoading(false);
       navigate("/");
     } catch (error) {
-      console.log(error);
+      
     } finally {
       setLoading(false);
     }
@@ -352,3 +352,4 @@ const CreateEditShop = () => {
 };
 
 export default CreateEditShop;
+

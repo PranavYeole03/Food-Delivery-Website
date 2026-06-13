@@ -1,4 +1,4 @@
-// import axios from "axios";
+// import api from "../api/axios";
 // import React, { useEffect, useState } from "react";
 // import { useNavigate, useParams } from "react-router-dom";
 // import { serverUrl } from "../App";
@@ -14,13 +14,13 @@
 //   const [liveLocation, setLiveLocation] = useState({});
 //   const handleGetOrder = async () => {
 //     try {
-//       const result = await axios.get(
+//       const result = await api.get(
 //         `${serverUrl}/api/order/get-order-by-id/${orderId}`,
 //         { withCredentials: true },
 //       );
 //       setCurrentOrder(result.data);
 //     } catch (error) {
-//       console.log(error);
+//       
 //     }
 //   };
 
@@ -121,7 +121,7 @@
 
 // export default TrackOrderPage;
 
-import axios from "axios";
+import api from "../api/axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { serverUrl } from "../App";
@@ -129,6 +129,7 @@ import { IoArrowBack } from "react-icons/io5";
 import DeliveryBoyTracking from "../components/DeliveryBoyTracking";
 import { useSelector } from "react-redux";
 import { socket } from "../socket";
+import useSocket from "../hooks/useSocket";
 
 const TrackOrderPage = () => {
   const { orderId } = useParams();
@@ -141,37 +142,76 @@ const TrackOrderPage = () => {
   // ================= GET ORDER =================
   const handleGetOrder = async () => {
     try {
-      const result = await axios.get(
+      const result = await api.get(
         `${serverUrl}/api/order/get-order-by-id/${orderId}`,
         { withCredentials: true }
       );
       setCurrentOrder(result.data);
     } catch (error) {
-      console.log(error);
+      
     }
   };
 
   // ================= SOCKET =================
-  useEffect(() => {
-    if (!socket) return; // ✅ FIX
+  useSocket("delivery:location-update", ({ deliveryBoyId, latitude, longitude }) => {
+    setLiveLocation((prev) => ({
+      ...prev,
+      [deliveryBoyId]: { lat: latitude, lon: longitude },
+    }));
+  });
 
-    const handleLocationUpdate = ({
-      deliveryBoyId,
-      latitude,
-      longitude,
-    }) => {
-      setLiveLocation((prev) => ({
+  useSocket("orderAccepted", ({ orderId, shopId, deliveryBoy }) => {
+    setCurrentOrder((prev) => {
+      if (!prev || prev._id !== orderId) return prev;
+      return {
         ...prev,
-        [deliveryBoyId]: { lat: latitude, lon: longitude },
-      }));
-    };
+        shopOrders: prev.shopOrders.map((so) =>
+          so.shop?._id === shopId || so.shop === shopId
+            ? { ...so, status: "preparing", assignedDeliveryBoy: deliveryBoy }
+            : so
+        ),
+      };
+    });
+  });
 
-    socket.on("updateDeliveryLocation", handleLocationUpdate);
+  useSocket("readyForPickup", ({ orderId, shopId }) => {
+    setCurrentOrder((prev) => {
+      if (!prev || prev._id !== orderId) return prev;
+      return {
+        ...prev,
+        shopOrders: prev.shopOrders.map((so) =>
+          so.shop?._id === shopId || so.shop === shopId
+            ? { ...so, status: "out of delivery" }
+            : so
+        ),
+      };
+    });
+  });
 
-    return () => {
-      socket.off("updateDeliveryLocation", handleLocationUpdate); // ✅ cleanup
-    };
-  }, [socket]);
+  useSocket("orderDelivered", ({ orderId, shopId }) => {
+    setCurrentOrder((prev) => {
+      if (!prev || prev._id !== orderId) return prev;
+      return {
+        ...prev,
+        shopOrders: prev.shopOrders.map((so) =>
+          so.shop?._id === shopId || so.shop === shopId
+            ? { ...so, status: "delivered" }
+            : so
+        ),
+      };
+    });
+  });
+
+  useSocket("orderCancelled", ({ orderId }) => {
+    setCurrentOrder((prev) => {
+      if (!prev || prev._id !== orderId) return prev;
+      return {
+        ...prev,
+        status: "cancelled",
+        shopOrders: prev.shopOrders.map((so) => ({ ...so, status: "cancelled" })),
+      };
+    });
+  });
 
   // ================= FETCH =================
   useEffect(() => {

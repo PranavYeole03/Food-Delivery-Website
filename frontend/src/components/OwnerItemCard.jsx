@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api/axios";
 import React from "react";
 import { FaPen } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { serverUrl } from "../App";
 import { useDispatch } from "react-redux";
 import { setmyShopData } from "../redux/ownerSlice";
+import { optimizeCloudinaryUrl } from "../utils/cloudinary";
 
 const OwnerItemCard = ({ data }) => {
   const navigate = useNavigate();
@@ -13,13 +14,13 @@ const OwnerItemCard = ({ data }) => {
 
   const handleDelete = async () => {
     try {
-      const result = await axios.get(
+      const result = await api.get(
         `${serverUrl}/api/item/delete/${data._id}`,
         { withCredentials: true },
       );
       dispatch(setmyShopData(result.data));
     } catch (error) {
-      console.log(error);
+      
     }
   };
 
@@ -34,8 +35,9 @@ const OwnerItemCard = ({ data }) => {
       {/* IMAGE */}
       <div className="relative w-32 sm:w-40 shrink-0 overflow-hidden">
         <img
-          src={data.image}
+          src={optimizeCloudinaryUrl(data.image, 300)}
           alt={data.name}
+          loading="lazy"
           className="w-full h-full object-cover
                  group-hover:scale-110 transition duration-500"
         />
@@ -94,3 +96,4 @@ const OwnerItemCard = ({ data }) => {
 };
 
 export default OwnerItemCard;
+

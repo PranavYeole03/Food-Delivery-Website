@@ -3,7 +3,7 @@ import { IoArrowBack } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaUtensils } from "react-icons/fa";
-import axios from "axios";
+import api from "../api/axios";
 import { serverUrl } from "../App";
 import { setmyShopData } from "../redux/ownerSlice";
 import { ClipLoader } from "react-spinners";
@@ -55,17 +55,17 @@ const EditItem = () => {
       if (backendImage) {
         formData.append("image", backendImage);
       }
-      const result = await axios.post(
+      const result = await api.post(
         `${serverUrl}/api/item/edit-items/${itemId}`,
         formData,
         { withCredentials: true }
       );
       dispatch(setmyShopData(result.data));
-      console.log(result.data);
+      
       setLoading(false);
       navigate("/");
     } catch (error) {
-      console.log(error);
+      
       setLoading(false);
     }
   };
@@ -73,13 +73,13 @@ const EditItem = () => {
   // useEffect(() => {
   //   const handleGetById = async () => {
   //     try {
-  //       const result = await axios.get(
+  //       const result = await api.get(
   //         `${serverUrl}/api/item/get-by-id/${itemId}`,
   //         { withCredentials: true }
   //       );
   //       setCurrentItem(result.data);
   //     } catch (error) {
-  //       console.log(error);
+  //       
   //     }
   //   };
   //   handleGetById();
@@ -96,7 +96,7 @@ const EditItem = () => {
   useEffect(() => {
   const handleGetById = async () => {
     try {
-      const result = await axios.get(
+      const result = await api.get(
         `${serverUrl}/api/item/get-by-id/${itemId}`,
         { withCredentials: true }
       );
@@ -109,7 +109,7 @@ const EditItem = () => {
       setFoodType(item.foodType || "");
       setFrontendImage(item.image || "");
     } catch (error) {
-      console.log(error);
+      
     }
   };
 
@@ -347,3 +347,4 @@ return (
 };
 
 export default EditItem;
+

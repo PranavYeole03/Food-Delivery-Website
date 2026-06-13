@@ -13,6 +13,10 @@ import {
   sendOtpByDeliveryBoy,
   verifyPayment,
   getTodayDelivery,
+  cancelOrder,
+  verifyPickupOTP,
+  returnOrder,
+  rejectOrder,
 } from "../controllers/order.controller.js";
 
 const orderRouter = express.Router();
@@ -27,7 +31,11 @@ orderRouter.post("/send-delivery-otp", isAuth, sendOtpByDeliveryBoy);
 orderRouter.post("/verify-otp-delivery", isAuth, verifyOTP);
 orderRouter.post("/update-status/:orderId/:shopId", isAuth, updateOrderStatus);
 orderRouter.get("/accept-order/:assignmentId", isAuth, acceptOrder);
+orderRouter.get("/reject-order/:assignmentId", isAuth, rejectOrder);
 orderRouter.get("/get-order-by-id/:orderId", isAuth, getOrderById);
 orderRouter.get("/get-today-deliveries", isAuth, getTodayDelivery);
+orderRouter.post("/cancel", isAuth, cancelOrder);
+orderRouter.post("/verify-otp-pickup", isAuth, verifyPickupOTP);
+orderRouter.post("/return", isAuth, returnOrder);
 
 export default orderRouter;

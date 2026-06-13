@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { motion } from "framer-motion";
 import { Line } from "react-chartjs-2";
 import {
@@ -33,12 +33,12 @@ export default function Analytics() {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const res = await axios.get(`${serverUrl}/api/analytics`, {
+        const res = await api.get(`${serverUrl}/api/analytics`, {
           withCredentials: true,
         });
         setData(res.data);
       } catch (err) {
-        console.log(err);
+        
       }
     };
 

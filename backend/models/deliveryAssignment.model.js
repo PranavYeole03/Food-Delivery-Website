@@ -35,6 +35,8 @@ const deliveryAssignmentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+deliveryAssignmentSchema.index({ status: 1 });
+
 const DeliveryAssignment = mongoose.model(
   "DeliveryAssignment",
   deliveryAssignmentSchema

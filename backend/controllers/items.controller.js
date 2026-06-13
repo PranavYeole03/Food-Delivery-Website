@@ -2,7 +2,7 @@ import Item from "../models/item.model.js";
 import Shop from "../models/shop.model.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 
-export const addItem = async (req, res) => {
+export const addItem = async (req, res, next) => {
   try {
     const { name, category, foodType, price } = req.body;
     let image;
@@ -30,11 +30,11 @@ export const addItem = async (req, res) => {
     });
     return res.status(201).json(shop);
   } catch (error) {
-    return res.status(500).json({ message: `add item error ${error}` });
+    return next(error);
   }
 };
 
-export const editItem = async (req, res) => {
+export const editItem = async (req, res, next) => {
   try {
     const itemId = req.params.itemId;
     const { name, category, foodType, price } = req.body;
@@ -42,15 +42,20 @@ export const editItem = async (req, res) => {
     if (req.file) {
       image = await uploadOnCloudinary(req.file.path);
     }
+    const updateData = {
+      name,
+      category,
+      foodType,
+      price,
+    };
+
+    if (image) {
+      updateData.image = image;
+    }
+
     const item = await Item.findByIdAndUpdate(
       itemId,
-      {
-        name,
-        category,
-        foodType,
-        price,
-        image,
-      },
+      updateData,
       { new: true },
     );
     if (!item) {
@@ -62,11 +67,11 @@ export const editItem = async (req, res) => {
     });
     return res.status(200).json(shop);
   } catch (error) {
-    return res.status(500).json({ message: `edit item ${error}` });
+    return next(error);
   }
 };
 
-export const getItemById = async (req, res) => {
+export const getItemById = async (req, res, next) => {
   try {
     const itemId = req.params.itemId;
     const item = await Item.findById(itemId);
@@ -75,11 +80,11 @@ export const getItemById = async (req, res) => {
     }
     return res.status(200).json(item);
   } catch (error) {
-    return res.status(500).json({ message: `Get item ${error}` });
+    return next(error);
   }
 };
 
-export const deleteItem = async (req, res) => {
+export const deleteItem = async (req, res, next) => {
   try {
     const itemId = req.params.itemId;
     const item = await Item.findByIdAndDelete(itemId);
@@ -95,11 +100,11 @@ export const deleteItem = async (req, res) => {
     });
     return res.status(200).json(shop);
   } catch (error) {
-    return res.status(500).json({ message: `Delete item ${error}` });
+    return next(error);
   }
 };
 
-export const getItemByCity = async (req, res) => {
+export const getItemByCity = async (req, res, next) => {
   try {
     const { city } = req.params;
     if (!city) {
@@ -107,22 +112,22 @@ export const getItemByCity = async (req, res) => {
     }
     const shops = await Shop.find({
       city: { $regex: new RegExp(`^${city}$`, "i") },
-    }).populate("items");
+    }).populate("items").lean();
     if (!shops) {
       return res.status(400).json({ message: "Shop no found" });
     }
     const shopIds = shops.map((shop) => shop._id);
-    const items = await Item.find({ shop: { $in: shopIds } });
+    const items = await Item.find({ shop: { $in: shopIds } }).lean();
     return res.status(200).json(items);
   } catch (error) {
-    return res.status(500).json({ message: `Get item by city ${error}` });
+    return next(error);
   }
 };
 
-export const getItemsByShop = async (req, res) => {
+export const getItemsByShop = async (req, res, next) => {
   try {
     const { shopId } = req.params;
-    const shop = await Shop.findById(shopId).populate("items");
+    const shop = await Shop.findById(shopId).populate("items").lean();
     if (!shop) {
       return res.status(400).json({ message: "Shop not found" });
     }
@@ -131,11 +136,11 @@ export const getItemsByShop = async (req, res) => {
       items: shop.items,
     });
   } catch (error) {
-    return res.status(500).json({ message: `Get shop by item ${error}` });
+    return next(error);
   }
 };
 
-export const searchItem = async (req, res) => {
+export const searchItem = async (req, res, next) => {
   try {
     const { query, city } = req.query;
     if (!query || !city) {
@@ -143,7 +148,7 @@ export const searchItem = async (req, res) => {
     }
     const shops = await Shop.find({
       city: { $regex: new RegExp(`^${city}$`, "i") },
-    }).populate("items");
+    }).populate("items").lean();
     if (!shops) {
       return res.status(400).json({ message: "Shop no found" });
     }
@@ -154,15 +159,15 @@ export const searchItem = async (req, res) => {
         { name: { $regex: query, $options: "i" } },
         { category: { $regex: query, $options: "i" } },
       ],
-    }).populate("shop", "name image");
+    }).populate("shop", "name image").lean();
 
     return res.status(200).json(items);
   } catch (error) {
-    return res.status(500).json({ message: `Search item ${error}` });
+    return next(error);
   }
 };
 
-export const rating = async (req, res) => {
+export const rating = async (req, res, next) => {
   try {
     const { itemId, rating } = req.body;
     if (!itemId || !rating) {
@@ -185,6 +190,6 @@ export const rating = async (req, res) => {
 
     return res.status(200).json({ rating: item.rating });
   } catch (error) {
-    return res.status(500).json({ message: `Rating item ${error}` });
+    return next(error);
   }
 };

@@ -123,6 +123,7 @@ import { CiStar } from "react-icons/ci";
 import { FaStar } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/userSlice";
+import { optimizeCloudinaryUrl } from "../utils/cloudinary";
 
 const FoodCard = ({ data }) => {
   const dispatch = useDispatch();
@@ -163,7 +164,12 @@ const FoodCard = ({ data }) => {
     <div className="w-62.5 rounded-2xl border-2 border-[#ff4d2d] bg-white shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col">
 
       <div className="relative w-full h-42.5">
-        <img src={data.image} className="w-full h-full object-cover" />
+        <img
+          src={optimizeCloudinaryUrl(data.image, 300)}
+          alt={data.name}
+          loading="lazy"
+          className="w-full h-full object-cover"
+        />
 
         <div className="absolute top-3 right-3 bg-white rounded-full p-1 shadow">
           {data.foodType === "veg" ? (
