@@ -1,16 +1,8 @@
-
-
-
-
 import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { socket } from "./socket";
-
 import { Toaster } from "react-hot-toast";
-
-
-
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -25,14 +17,8 @@ import MyOrders from "./pages/MyOrders";
 import TrackOrderPage from "./pages/TrackOrderPage";
 import ShopItems from "./pages/ShopItems";
 import Analytics from "./pages/Analytics";
-
 import AppInfo from "./pages/AppInfo";
 import Wallet from "./pages/Wallet";
-
-// Hooks
-
-import AppInfo from "./pages/AppInfo"
-
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
 import useGetCity from "./hooks/useGetCity";
 import useGetMyShop from "./hooks/useGetMyShop";
